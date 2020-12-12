@@ -9,15 +9,22 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.MoveHatch;
+import frc.robot.commands.MoveIntake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.HatchIntake;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,11 +38,19 @@ public class RobotContainer {
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
-  private SpeedController leftOne, leftTwo, rightOne, rightTwo;
-  private SpeedControllerGroup left, right;
+  private SpeedController leftOneDriveTrain, leftTwoDriveTrain, rightOneDriveTrain, rightTwoDriveTrain;
+  private SpeedControllerGroup leftDriveTrain, rightDriveTrain;
   private DifferentialDrive drive;
   private DriveTrain driveTrain;
   private Joystick joystick;
+
+  private SpeedController intakeLeft, intakeRight;
+  private Intake intake;
+  private Button intakeIn, intakeOut;
+
+  private HatchIntake hatch;
+  private Solenoid hatchSolenoid;
+  private Button hatchSetSolenoid;
 
 
 
@@ -46,16 +61,25 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    leftOne = new SteelTalonController(0, false, 1);
-    leftTwo = new SteelTalonController(1, false, 1);
-    rightOne = new SteelTalonController(2, false, 1);
-    rightTwo = new SteelTalonController(3, false, 1);
+    leftOneDriveTrain = new SteelTalonController(Constants.LEFT_ONE_DRIVE_TRAIN, false, 1);
+    leftTwoDriveTrain = new SteelTalonController(Constants.LEFT_TWO_DRIVE_TRAIN, false, 1);
+    rightOneDriveTrain = new SteelTalonController(Constants.RIGHT_ONE_DRIVE_TRAIN, false, 1);
+    rightTwoDriveTrain = new SteelTalonController(Constants.RIGHT_TWO_DRIVE_TRAIN, false, 1);
 
-    left = new SpeedControllerGroup(leftOne, leftTwo);
-    right = new SpeedControllerGroup(rightOne, rightTwo);
+    leftDriveTrain = new SpeedControllerGroup(leftOneDriveTrain, leftTwoDriveTrain);
+    rightDriveTrain = new SpeedControllerGroup(rightOneDriveTrain, rightTwoDriveTrain);
 
-    drive = new DifferentialDrive(left, right);
-    driveTrain = new DriveTrain(left, right, drive);
+    drive = new DifferentialDrive(leftDriveTrain, rightDriveTrain);
+    driveTrain = new DriveTrain(leftDriveTrain, rightDriveTrain, drive);
+
+    intakeLeft = new SteelTalonController(Constants.INTAKE_LEFT, false, 1);
+    intakeRight = new SteelTalonController(Constants.INTAKE_RIGHT, false, 1);
+    
+    intake = new Intake(intakeLeft, intakeRight);
+
+    hatchSolenoid = new Solenoid(Constants.PCM_PORT, Constants.HATCH_SOLENOID_CHANNEL);
+    hatch = new HatchIntake(hatchSolenoid);
+
     driveTrain.setDefaultCommand(new DriveWithJoystick());
   }
 
@@ -67,6 +91,15 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     joystick = new Joystick(0);
+    intakeIn = new JoystickButton(joystick, Constants.INTAKE_IN_BUTTON);
+    intakeOut = new JoystickButton(joystick, Constants.INTAKE_OUT_BUTTON);
+
+    hatchSetSolenoid = new JoystickButton(joystick, Constants.HATCH_SOLENOID_BUTTON);
+
+    intakeIn.whileHeld(new MoveIntake(Constants.INTAKE_IN_SPEED));
+    intakeOut.whileHeld(new MoveIntake(Constants.INTAKE_OUT_SPEED));
+
+    hatchSetSolenoid.whenPressed(new MoveHatch());
   }
 
 
@@ -87,5 +120,16 @@ public class RobotContainer {
   public Joystick getJoystick()
   {
     return joystick;
+  }
+
+  public Intake getIntake()
+  {
+    return intake;
+  }
+
+  public HatchIntake getHatchIntake()
+
+  {
+    return hatch;
   }
 }
