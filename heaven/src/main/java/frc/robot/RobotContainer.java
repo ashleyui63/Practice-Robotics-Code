@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Potentiometer;
+import frc.robot.commands.AutonMoveStraigth;
 import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.MoveHatch;
@@ -42,6 +43,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final AutonMoveStraigth moveStraigth = new AutonMoveStraigth(Constants.DT_LEFT_SPEED, Constants.DT_RIGHT_SPEED);
 
   private SpeedController leftOneDriveTrain, leftTwoDriveTrain, rightOneDriveTrain, rightTwoDriveTrain;
   private SpeedControllerGroup leftDriveTrain, rightDriveTrain;
@@ -142,7 +144,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return moveStraigth;
   }
 
   public DriveTrain getDriveTrain()
