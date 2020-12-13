@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -14,14 +15,18 @@ import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.MoveHatch;
 import frc.robot.commands.MoveIntake;
+import frc.robot.commands.RotateArm;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HatchIntake;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -52,6 +57,18 @@ public class RobotContainer {
   private Solenoid hatchSolenoid;
   private Button hatchSetSolenoid;
 
+  private SpeedController armController;
+  private AnalogPotentiometer armPotentiometer;
+  private Arm arm;
+  private Button armUp;
+  private Button armDown;
+
+  private SpeedController wristController;
+  private AnalogPotentiometer wristPotentiometer;
+  private Wrist wrist;
+  private Button wristUp;
+  private Button wristDown;
+
 
 
 
@@ -80,6 +97,15 @@ public class RobotContainer {
     hatchSolenoid = new Solenoid(Constants.PCM_PORT, Constants.HATCH_SOLENOID_CHANNEL);
     hatch = new HatchIntake(hatchSolenoid);
 
+    armController = new SteelTalonController(Constants.ARM_MOTOR_SPEED, false, 1);
+    armPotentiometer = new AnalogPotentiometer(Constants.ARM_POTENTIOMETER_CHANNEL, 118);
+    arm = new Arm(armController);
+
+    wristController = new SteelTalonController(Constants.WRIST_MOTOR_SPEED, false, 1);
+    wristPotentiometer = new AnalogPotentiometer(Constants.WRIST_POTENTIOMETER_CHANNEL, 121);
+    wrist = new Wrist(wristController);
+
+
     driveTrain.setDefaultCommand(new DriveWithJoystick());
   }
 
@@ -93,11 +119,17 @@ public class RobotContainer {
     joystick = new Joystick(0);
     intakeIn = new JoystickButton(joystick, Constants.INTAKE_IN_BUTTON);
     intakeOut = new JoystickButton(joystick, Constants.INTAKE_OUT_BUTTON);
-
+    armUp = new JoystickButton(joystick, Constants.ARM_UP_BUTTON);
+    armDown = new JoystickButton(joystick, Constants.ARM_DOWN_BUTTON);
     hatchSetSolenoid = new JoystickButton(joystick, Constants.HATCH_SOLENOID_BUTTON);
 
     intakeIn.whileHeld(new MoveIntake(Constants.INTAKE_IN_SPEED));
     intakeOut.whileHeld(new MoveIntake(Constants.INTAKE_OUT_SPEED));
+    armUp.whileHeld(new RotateArm(Constants.ARM_MOTOR_SPEED));
+    armDown.whileHeld(new RotateArm(-Constants.ARM_MOTOR_SPEED));
+    wristUp.whileHeld(new RotateArm(Constants.WRIST_MOTOR_SPEED));
+    wristDown.whileHeld(new RotateArm(-Constants.WRIST_MOTOR_SPEED));
+
 
     hatchSetSolenoid.whenPressed(new MoveHatch());
   }
@@ -131,5 +163,25 @@ public class RobotContainer {
 
   {
     return hatch;
+  }
+
+  public Arm getArm()
+  {
+    return arm;
+  }
+
+  public Potentiometer getArmPotentiometer()
+  {
+    return armPotentiometer;
+  }
+
+  public Wrist getWrist()
+  {
+    return wrist;
+  }
+
+  public Potentiometer getWristPotentiometer()
+  {
+    return wristPotentiometer;
   }
 }

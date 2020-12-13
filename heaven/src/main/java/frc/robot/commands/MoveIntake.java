@@ -27,7 +27,7 @@ public class MoveIntake extends CommandBase
     public boolean isFinished()
     {
         if(speed>0)
-            return !Robot.m_robotContainer.getJoystick().getRawButtonPressed(Constants.INTAKE_IN_BUTTON);
-        return !Robot.m_robotContainer.getJoystick().getRawButtonPressed(Constants.INTAKE_OUT_BUTTON);
+            return !Robot.m_robotContainer.getJoystick().getRawButton(Constants.INTAKE_IN_BUTTON);
+        return !Robot.m_robotContainer.getJoystick().getRawButton(Constants.INTAKE_OUT_BUTTON);
     }
 }

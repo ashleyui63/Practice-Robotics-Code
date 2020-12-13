@@ -30,13 +30,30 @@ public final class Constants {
 
     public static final double INTAKE_IN_SPEED = 0.5;
     public static final double INTAKE_OUT_SPEED = -0.5; 
-
-    public static final int PCM_PORT = 0;
     
     public static final int HATCH_SOLENOID_CHANNEL = 3; 
-
     public static final int HATCH_SOLENOID_BUTTON = 11;
 
-    
+    //IN 2019 CODE HAD SAME DEVICE NUMBER INTAKE_RIGHT
+    public static final int ARM_MOTOR_SPEED = 5;
+
+    public static final int ARM_POTENTIOMETER_CHANNEL = 1;
+    public static final double ARM_LIMIT_UP = 69;
+    public static final double ARM_LIMIT_DOWN = 109.5;
+
+    public static final int ARM_UP_BUTTON = 5;
+    public static final int ARM_DOWN_BUTTON = 3;
+
+    public static final int WRIST_MOTOR_SPEED = 3;
+
+    public static final int WRIST_POTENTIOMETER_CHANNEL = 0;
+    public static final double WRIST_LIMIT_UP = 5.5;
+    public static final double WRIST_LIMIT_DOWN = 56.4;
+
+    public static final int WRIST_UP_BUTTON = 8;
+    public static final int WRIST_DOWN_BUTTON = 10;
+
+
+    public static final int PCM_PORT = 0;
     public static final int PCM_PORT_BUTTON = 9;
 }
